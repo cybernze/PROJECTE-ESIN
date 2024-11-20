@@ -8,7 +8,7 @@ namespace word_toolkit {
     bool es_canonic(const string& s) throw() {
         bool canonic = true;
         char prev=s[0];
-        int i(1), size(s.size());
+        int size(s.size());
         for(int i=1; i<size; i++){
             if(prev >= s[i]){   /*Ordre estrictament creixent */
                 canonic = false;
