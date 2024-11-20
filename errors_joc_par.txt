@@ -1,0 +1,4 @@
+
+21 anagrames     L'string no es un anagrama.
+31 iter_subset   Acces amb iterador de subconjunts invalid.
+41 obte_paraules Longitud invalida.

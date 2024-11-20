@@ -1,0 +1,1 @@
+#include "diccionari.hpp"
