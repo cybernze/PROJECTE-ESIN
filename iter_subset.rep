@@ -6,17 +6,4 @@
 
     //Genera el siguiente subconjunto en orden lexicográfico. Retorna true si ha pogut generar un nou subconjunt, false en cas contrari.
     //
-    bool combina() throw() {
-        int i = k - 1;
-        while (i >= 0 and sub_actual[i] == n - k + 1 + i) {
-            --i;
-        }
-        if (i < 0) {
-            return false; // No existeixen més combinacions.
-        }
-        ++sub_actual[i];
-        for (int j = i + 1; j < k; ++j) { //mantenim elements consecutius després de un increment en cas necessari
-            sub_actual[j] = sub_actual[i] + j - i;
-        }
-        return true; // Nueva combinación generada.
-    }
+    bool combina();

@@ -6,14 +6,16 @@
 iter_subset::iter_subset(nat n, nat k) throw(error) {
     this->n = n;
     this->k = k;
-    if (k < n) {
+    if (k <= n) {
         termina = false; // pot generar més subconjunts
+        sub_actual.resize(k);
         for (nat i = 0; i < k; ++i) {
             sub_actual[i]=i+1;
         }
     }
     else { //no es pot generar subconjunts
         termina = true;
+        return;
     }
 }
 
@@ -53,7 +55,7 @@ subset iter_subset::operator*() const throw(error){
         return sub_actual;
     }
     else {
-        throw error(IterSubsetIncorr);
+        return subset();
     }
 }
 
@@ -97,4 +99,19 @@ bool iter_subset::operator!=(const iter_subset& c) const throw(){
     else {
         return false;
     }
+}
+
+bool iter_subset::combina() {
+    for (nat i = k - 1; i >= 0 && i < sub_actual.size(); --i) {
+        // Comprobamos que el índice 'i' esté dentro de los límites de sub_actual
+        if (sub_actual[i] < n - (k - 1 - i)) {
+            ++sub_actual[i];
+            for (nat j = i + 1; j < k; ++j) {
+                sub_actual[j] = sub_actual[j - 1] + 1;
+            }
+            return true; // Hemos generado una nueva combinación
+        }
+    }
+    termina = true; // No hay más combinaciones
+    return false;
 }
