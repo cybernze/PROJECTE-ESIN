@@ -12,3 +12,4 @@ Node *_arrel; //Arrel de l'arbre
 nat num_paraules; //Numero de paraules al diccionari
 void copia(node*& dest, node* src);  // Realiza una copia profunda
 void neteja(node* p); //Realiza una limpieza del arbol apuntado por p
+satisfan_patro_recursive(node* node, const vector<string>& q, unsigned long pos, string& current_word, list<string>& L) //Funcio helper de satisfan_patro

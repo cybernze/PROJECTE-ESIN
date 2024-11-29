@@ -80,3 +80,34 @@ string diccionari::prefix(const string& p) const throw(error){
 nat diccionari::num_pal()const throw(){
     return num_paraules;
 }
+
+void diccionari::satisfan_patro(const vector<string>& q, list<string>& L)const throw(error) {
+    L.clear(); //Nos aseguramos que la lista esté vacia
+    string current_word;
+    satisfan_patro_recursive(_arrel, q, 0, current_word, L);  // Llamada al método auxiliar
+    L.sort();  // Ordenar alfabéticamente
+}
+
+void diccionari::satisfan_patro_recursive(node* node, const vector<string>& q, unsigned long pos, string& current_word, list<string>& L) {
+    if (node == nullptr) return;
+
+    // CB: Hem processat tot el patró
+    if (pos == q.size()) {
+        if (node->es_final) {
+            L.push_back(current_word);  // Agregar la palabra si es válida
+        }
+        return;
+    }
+
+    // CR: Procesar el patró actual (caràcters válids per posició actual)
+    const string& valid_chars = q[pos];
+    string new_word = current_word;
+    for (unsigned long i = 0; i < valid_chars.length(); i++) {
+        char c = valid_chars[i];
+        int index = c - 'a';
+        if (node->fills[index] != nullptr) {
+            new_word = current_word + c;
+            satisfan_patro_recursive(node->fills[index], q, pos + 1, new_word, L);
+        }
+    }
+}
