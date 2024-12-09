@@ -1,9 +1,9 @@
-    nat n;                   // Nombre total d'elements
-    nat k;                   // Tamany dels subconjunts
-    vector<nat> sub_actual; // Subconjunt actual
-    bool termina;                  // Estat de l'iterador. True si ha terminat i no hi han més subocnjunts per generar. False en cas contrari.
-                                   // Permet tenir eficientment l'estat del nostre subconjunt en tot moment. Així podem tractar errors d'accés fora de rang molt fàcil.
+nat n;                   // Nombre total d'elements
+nat k;                   // Tamany dels subconjunts
+vector<nat> sub_actual; // Subconjunt actual
+bool termina;                  // Estat de l'iterador. True si ha terminat i no hi han més subocnjunts per generar. False en cas contrari.
+                                // Permet tenir eficientment l'estat del nostre subconjunt en tot moment. Així podem tractar errors d'accés fora de rang molt fàcil.
 
-    //Genera el siguiente subconjunto en orden lexicográfico. Retorna true si ha pogut generar un nou subconjunt, false en cas contrari.
-    //
-    bool combina();
+//Genera el siguiente subconjunto en orden lexicográfico. Retorna true si ha pogut generar un nou subconjunt, false en cas contrari.
+//
+bool combina();

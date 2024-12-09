@@ -51,5 +51,6 @@ public:
 
 private:
   #include "diccionari.rep"
+  void dfs_llista_paraules(node* n, string& current_word, nat k, list<string>& L) const;
 };
 #endif

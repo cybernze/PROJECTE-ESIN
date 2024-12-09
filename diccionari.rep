@@ -1,15 +1,15 @@
 //Representació arbre Trie
 struct node{
     bool es_final; //Marca si el node actual es final de paraula
-    node *fills[26]; /*Fills del node (+ eficient que unordered_set/map, tiene O(1) en insercion, busqueda)
+    node *fills[27]; /*Fills del node (+ eficient que unordered_set/map, tiene O(1) en insercion, busqueda)
                         com el nostre alfabet es petit no ens importa molt l'espai que reserva (unic punt dèbil)
                         i menys complex que fer hash i evitar colisions*/
     node() : es_final(false) {
         fill(begin(fills), end(fills), nullptr);  // Inicialitzem a nullptr
     }
-}
-Node *_arrel; //Arrel de l'arbre
+};
+node *_arrel; //Arrel de l'arbre
 nat num_paraules; //Numero de paraules al diccionari
 void copia(node*& dest, node* src);  // Realiza una copia profunda
 void neteja(node* p); //Realiza una limpieza del arbol apuntado por p
-satisfan_patro_recursive(node* node, const vector<string>& q, unsigned long pos, string& current_word, list<string>& L) //Funcio helper de satisfan_patro
+void satisfan_patro_recursive(node* p, const vector<string>& q, unsigned long pos, string& current_word, list<string>& L)const; //Funcio helper de satisfan_patro

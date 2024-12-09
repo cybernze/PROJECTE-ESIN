@@ -15,8 +15,8 @@ iter_subset::iter_subset(nat n, nat k) throw(error) {
     }
     else { //no es pot generar subconjunts
         termina = true;
-        return;
     }
+    return;
 }
 
 /* Tres grans. Constructor per còpia, operador d'assignació i destructor. */
@@ -51,12 +51,8 @@ bool iter_subset::end() const throw() {
    Post: Retorna el subconjunt apuntat per l'iterador;
    llança un error si l'iterador apunta al sentinella. */
 subset iter_subset::operator*() const throw(error){
-    if (!termina) {
-        return sub_actual;
-    }
-    else {
-        return subset();
-    }
+    if (!termina) return sub_actual;
+    throw error(IterSubsetIncorr);
 }
 
 /* Operador de preincrement.
@@ -85,20 +81,11 @@ iter_subset iter_subset::operator++(int) throw(){
 
 /* Operadors relacionals. */
 bool iter_subset::operator==(const iter_subset& c) const throw(){
-    if (termina == c.termina) { //comparem estat dels iteradors
-        return true;
-    }
-    else {
-        return false;
-    }
+    return (termina == c.termina && sub_actual == c.sub_actual && n == c.n && k == c.k);
 }
+
 bool iter_subset::operator!=(const iter_subset& c) const throw(){
-    if (termina != c.termina) { //comparem estat dels iteradors
-        return true;
-    }
-    else {
-        return false;
-    }
+	return !(*this==c);
 }
 
 bool iter_subset::combina() {
