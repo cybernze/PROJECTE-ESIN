@@ -1,10 +1,9 @@
 //Representació arbre Trie
 struct node{
-    bool es_final; //Marca si el node actual es final de paraula
-    node *fills[27]; /*Fills del node (+ eficient que unordered_set/map, tiene O(1) en insercion, busqueda)
+    node *fills[27]; /*Fills del node, 26 per lletres i 1 per final de paraula (+ eficient que unordered_set/map, tiene O(1) en insercion, busqueda)
                         com el nostre alfabet es petit no ens importa molt l'espai que reserva (unic punt dèbil)
                         i menys complex que fer hash i evitar colisions*/
-    node() : es_final(false) {
+    node() {
         fill(begin(fills), end(fills), nullptr);  // Inicialitzem a nullptr
     }
 };
