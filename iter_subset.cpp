@@ -81,6 +81,7 @@ iter_subset iter_subset::operator++(int) throw(){
 
 /* Operadors relacionals. */
 bool iter_subset::operator==(const iter_subset& c) const throw(){
+    if(k==0 && c.k==0 && n!=0 && c.n!=0 && termina==c.termina) return true;
     return (termina == c.termina && sub_actual == c.sub_actual && n == c.n && k == c.k);
 }
 
