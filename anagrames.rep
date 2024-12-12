@@ -1,0 +1,3 @@
+// Hash table que mapea anagramas canónicos a listas de palabras
+//Cada clave es el anagrama canonico y el valor es una lista de palabras que cumplen el anagrama canonico
+unordered_map<string, list<string>> agrupaments;

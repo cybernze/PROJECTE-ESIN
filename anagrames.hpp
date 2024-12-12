@@ -4,6 +4,7 @@
 #include <list>
 #include <esin/error>
 #include "diccionari.hpp"
+#include <unordered_map>
 
 using namespace std;
 
