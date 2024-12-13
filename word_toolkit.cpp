@@ -10,7 +10,7 @@ namespace word_toolkit {
         char prev=s[0];
         int size(s.size());
         for(int i=1; i<size; i++){
-            if(prev >= s[i]){   /*Ordre estrictament creixent */
+            if(prev > s[i]){   /*Ordre estrictament creixent */
                 canonic = false;
                 break;
             }

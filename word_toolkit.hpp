@@ -1,6 +1,7 @@
 #ifndef _WORD_TOOLKIT_HPP
 #define _WORD_TOOLKIT_HPP
 #include <string>
+#include <vector>
 #include <list>
 #include <esin/error>
 
