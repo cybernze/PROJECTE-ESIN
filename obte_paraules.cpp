@@ -1,6 +1,6 @@
-#include <set>
 #include <list>
 #include <string>
+#include "AVL.cpp"
 #include "anagrames.hpp"
 #include "iter_subset.hpp"
 #include "obte_paraules.hpp"
@@ -20,9 +20,9 @@ void obte_paraules(nat k, const string& s, const anagrames& A, list<string>& par
     }
 
     paraules.clear();
-    set<string> paraules_unicas;
-    /*Utilizamos set frente a unordered_set ya que tiene coste de insercion de O(log n)
-     vs O(1)+ordenacion O(n log n), (set introduce los valores en orden)*/
+    AVLTree<string> paraules_unicas;
+    /*Utilizamos AVL ya que tiene coste de insercion de O(log n)
+     vs O(1)+ordenacion O(n log n)*/
 
     // Iterar sobre los subconjuntos de k elementos
     iter_subset comb(s.size(), k);
@@ -40,13 +40,13 @@ void obte_paraules(nat k, const string& s, const anagrames& A, list<string>& par
         A.mateix_anagrama_canonic(word_toolkit::anagrama_canonic(combinacion), palabras_validas);
 
         // Insertar las palabras en el conjunto para evitar duplicados
-        paraules_unicas.insert(palabras_validas.begin(), palabras_validas.end());
+        paraules_unicas.insertList(palabras_validas);
 
         ++comb; // Avanzar al siguiente subconjunto
     }
 
     // Pasar las palabras únicas al resultado final en orden lexicográfico
-    paraules.assign(paraules_unicas.begin(), paraules_unicas.end());
+        paraules = paraules_unicas.getInOrder();
 }
 
 /* Pre: Cert
