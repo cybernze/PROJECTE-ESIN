@@ -10,8 +10,5 @@ node_hash** _taula;
 nat _M;
 nat _quants;
 
-// Función hash: suma ponderada de caracteres
-nat fhash(const string& clau) const;
-
 // Redimensionar la tabla cuando el factor de carga exceda el límite
 void rehash();
