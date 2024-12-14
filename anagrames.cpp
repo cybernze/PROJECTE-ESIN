@@ -2,60 +2,144 @@
 #include "anagrames.rep"
 #include "word_toolkit.hpp" // Funciones de ayuda para anagramas
 
-anagrames::anagrames() throw(error) : diccionari(), agrupaments() {}
+const float anagrames::LOAD_FACTOR = 0.75;
 
-anagrames::anagrames(const anagrames& other) throw(error)
-: diccionari(other), agrupaments(other.agrupaments) {}
+anagrames::anagrames() throw(error) : _M(16), _quants(0){
+  _taula= new node_hash*[_M]();
+}
 
-anagrames& anagrames::operator=(const anagrames& other) throw(error) {
-  if (this != &other) {
-    diccionari::operator=(other);
-    agrupaments = other.agrupaments;
+anagrames::anagrames(const anagrames& A) throw(error)
+: _M(A._M), _quants(A._quants) {
+  _taula= new node_hash *[_M]();
+  for(nat i=0; i<_M; i++){
+    if(A._taula[i]){
+      _taula[i] = new node_hash(*A._taula[i]);
+      node_hash* actual = _taula[i];
+      node_hash* original = A._taula[i]->_seg;
+      while(original){
+        actual->_seg = new node_hash(*original);
+        actual = actual->_seg;
+        original = original->_seg;
+      }
+    }
+  }
+}
+
+anagrames& anagrames::operator=(const anagrames& A) throw(error) {
+  if (this != &A) {
+    this->~anagrames();
+    _M = A._M;
+    _quants = A._quants;
+    _taula= new node_hash *[_M]();
+    for(nat i=0; i<_M; i++){
+      if(A._taula[i]){
+        _taula[i] = new node_hash(*A._taula[i]);
+        node_hash* actual = _taula[i];
+        node_hash* original = A._taula[i]->_seg;
+        while(original){
+          actual->_seg = new node_hash(*original);
+          actual = actual->_seg;
+          original = original->_seg;
+        }
+      }
+    }
   }
   return *this;
 }
 
-anagrames::~anagrames() throw() {}
-
-void anagrames::insereix(const string& paraula) throw(error) {
-
-  diccionari::insereix(paraula); // Inserta en el diccionario base
-
-  string canonic = word_toolkit::anagrama_canonic(paraula); // Calcula el anagrama canónico
-
-  // Referencia a la lista de palabras asociadas al anagrama canónico
-  list<string>& lista_palabras = agrupaments[canonic];
-
-  // Si la lista está vacía, simplemente agrega la palabra
-  if (lista_palabras.empty()) {
-    lista_palabras.push_back(paraula);
-    return;
+anagrames::~anagrames() throw() {
+  for (nat i = 0; i < _M; ++i) {
+    node_hash* actual = _taula[i];
+    while (actual) {
+      node_hash* temp = actual;
+      actual = actual->_seg;
+      delete temp;
+    }
   }
-
-  // Recorremos la lista para encontrar la posición de inserción correcta
-  auto it = lista_palabras.begin();
-  while (it != lista_palabras.end() && *it < paraula) {
-    ++it;  // Avanzamos hasta encontrar la primera palabra mayor o igual a 'paraula'
-  }
-
-  //Se encuentra un duplicado
-  if(it!=lista_palabras.end() && *it==paraula) return;
-
-  // Insertamos la palabra en la posición correcta
-  lista_palabras.insert(it, paraula);
+  delete[] _taula;
 }
 
+void anagrames::insereix(const string& paraula) throw(error) {
+  string clau = word_toolkit::anagrama_canonic(paraula);
+  int pos = fhash(clau);
+
+  node_hash* actual = _taula[pos];
+  while (actual) {
+    if (actual->_clau == clau) {
+      // Insertar la palabra en orden en la lista
+      auto it = actual->_valors.begin();
+      while (it != actual->_valors.end() && *it < paraula) {
+        ++it;
+      }
+
+      if (it == actual->_valors.end() || *it != paraula) {
+        actual->_valors.insert(it, paraula);
+      }
+      return;
+    }
+    actual = actual->_seg;
+  }
+
+  _taula[pos] = new node_hash;
+  _taula[pos]->_clau = clau;
+  _taula[pos]->_valors = {paraula};
+  _taula[pos]->_seg = _taula[pos];
+  ++_quants;
+
+  if (static_cast<float>(_quants) / _M > LOAD_FACTOR) {
+    rehash();
+  }
+}
 
 void anagrames::mateix_anagrama_canonic(const string& a, list<string>& L) const throw(error) {
   if (!word_toolkit::es_canonic(a)) {
     throw error(NoEsCanonic);
   }
 
-  auto it = agrupaments.find(a);
-  //Cost de find es O(1)
-  if (it != agrupaments.end()) {
-    L = it->second; // Devuelve las palabras que tienen el mismo anagrama (first es la clave y second el valor, en nuestro caso el valor es la lista)
-  } else {
-    L.clear(); // Lista vacía si no hay coincidencias
+  int pos = fhash(a);
+  node_hash* actual = _taula[pos];
+  while (actual) {
+    if (actual->_clau == a) {
+      L = actual->_valors;
+      return;
+    }
+    actual = actual->_seg;
   }
+
+  L.clear();
+}
+
+nat anagrames::fhash(const string& clau){
+  int hashValue=0;
+  nat p=31;
+  nat power=1;
+
+  for (char c : clau) {
+    hashValue = (hashValue + (c * power)) % _M;
+    power = (power * p) % _M;
+  }
+
+  return hashValue;
+
+}
+
+void anagrames::() {
+  nat nuevoTamano = _M * 2;
+  node_hash** nuevaTabla = new node_hash*[nuevoTamano]();
+
+  // Reinsertar elementos de la tabla antigua en la nueva tabla
+  for (nat i = 0; i < _M; ++i) {
+    node_hash* actual = _taula[i];
+    while (actual != nullptr) {
+      nat nuevaPos = fhash(actual->_clau) % nuevoTamano;
+      node_hash* siguiente = actual->_seg;
+      actual->_seg = nuevaTabla[nuevaPos];
+      nuevaTabla[nuevaPos] = actual;
+      actual = siguiente;
+    }
+  }
+
+  delete[] _taula; // Liberar la tabla antigua
+  _taula = nuevaTabla;
+  _M = nuevoTamano;
 }

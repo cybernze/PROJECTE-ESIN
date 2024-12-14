@@ -4,7 +4,6 @@
 #include <list>
 #include <esin/error>
 #include "diccionari.hpp"
-#include <unordered_map>
 
 using namespace std;
 
@@ -35,5 +34,7 @@ public:
 
 private:
   #include "anagrames.rep"
+  static const float LOAD_FACTOR; // Factor de càrrega per fer rehashing
+
 };
 #endif

@@ -1,3 +1,17 @@
 // Hash table que mapea anagramas canónicos a listas de palabras
 //Cada clave es el anagrama canonico y el valor es una lista de palabras que cumplen el anagrama canonico
-unordered_map<string, list<string>> agrupaments;
+struct node_hash{
+    string _clau;
+    list<string> _valors;
+    node_hash* _seg;
+};
+
+node_hash** _taula;
+nat _M;
+nat _quants;
+
+// Función hash: suma ponderada de caracteres
+nat fhash(const string& clau) const;
+
+// Redimensionar la tabla cuando el factor de carga exceda el límite
+void rehash();
