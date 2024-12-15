@@ -12,3 +12,5 @@ nat _quants;
 
 // Redimensionar la tabla cuando el factor de carga exceda el límite
 void rehash();
+nat fhash(const string& clau)const;
+static const float LOAD_FACTOR;
