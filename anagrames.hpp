@@ -36,7 +36,7 @@ private:
   #include "anagrames.rep"
 
   // Función hash: suma ponderada de caracteres
-  int fhash(const string& clau) const;
+  nat fhash(const string& clau) const;
   static const float LOAD_FACTOR; // Factor de càrrega per fer rehashing
 
 };

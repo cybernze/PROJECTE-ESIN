@@ -60,8 +60,9 @@ anagrames::~anagrames() throw() {
 }
 
 void anagrames::insereix(const string& paraula) throw(error) {
+  diccionari::insereix(paraula);
   string clau = word_toolkit::anagrama_canonic(paraula);
-  int pos = fhash(clau);
+  int pos = fhash(clau) % _M;
 
   node_hash* actual = _taula[pos];
 
@@ -116,42 +117,40 @@ void anagrames::mateix_anagrama_canonic(const string& a, list<string>& L) const 
   L.clear();
 }
 
-int anagrames::fhash(const string& clau)const{
-  int hashValue=0;
-  nat p=31;
-  nat power=1;
-
-  for (char c : clau) {
-    hashValue = (hashValue + (c * power)) % _M;
-    power = (power * p) % _M;
-  }
-
-  return hashValue;
-
+nat anagrames::fhash(const string& clau)const{
+	nat n = 0;
+	for (nat i=0; i < clau.length(); ++i) {
+		n = n + clau[i]*(i+1); // n acumula el codi ascii
+	}
+	return n;
 }
 
 void anagrames::rehash() {
-  nat nuevoTamano = _M * 2; // Duplicar el tamaño de la tabla
-  node_hash** nuevaTabla = new node_hash*[nuevoTamano](); // Nueva tabla inicializada a nullptr
+    nat nuevoTamano = _M * 2; // Duplicar el tamaño de la tabla
+    node_hash** nuevaTabla = new node_hash*[nuevoTamano](); // Crear una nueva tabla inicializada a nullptr
 
-  // Reinsertar elementos de la tabla antigua en la nueva tabla
-  for (nat i = 0; i < _M; ++i) {
-    node_hash* actual = _taula[i];
-    while (actual != nullptr) {
-      node_hash* siguiente = actual->_seg; // Guardar el siguiente nodo antes de modificar _seg
+    // Reinsertar todos los nodos de la tabla antigua en la nueva tabla
+    for (nat i = 0; i < _M; ++i) {
+        node_hash* actual = _taula[i]; // Apuntador al primer nodo en la posición actual
 
-      // Recalcular la nueva posición en la tabla ampliada
-      nat nuevaPos = fhash(actual->_clau) % nuevoTamano;
+        while (actual) {
+            node_hash* siguiente = actual->_seg; // Guardar el siguiente nodo antes de modificar `_seg`
 
-      // Insertar el nodo al inicio de la lista en la nueva posición
-      actual->_seg = nuevaTabla[nuevaPos];
-      nuevaTabla[nuevaPos] = actual;
+            // Recalcular la nueva posición en la tabla ampliada
+            nat nuevaPos = fhash(actual->_clau) % nuevoTamano;
 
-      actual = siguiente; // Avanzar al siguiente nodo en la vieja tabla
+            // Insertar el nodo al inicio de la lista enlazada en la nueva posición
+            actual->_seg = nuevaTabla[nuevaPos];
+            nuevaTabla[nuevaPos] = actual;
+
+            actual = siguiente; // Avanzar al siguiente nodo en la lista enlazada actual
+        }
     }
-  }
 
-  delete[] _taula; // Liberar la memoria de la tabla antigua
-  _taula = nuevaTabla; // Actualizar la tabla
-  _M = nuevoTamano; // Actualizar el tamaño
+    // Liberar la memoria de la tabla antigua
+    delete[] _taula;
+
+    // Actualizar la tabla y su tamaño
+    _taula = nuevaTabla;
+    _M = nuevoTamano;
 }

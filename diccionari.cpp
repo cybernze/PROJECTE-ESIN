@@ -39,8 +39,6 @@ void diccionari::neteja(node* p) {
 void diccionari::copia(node*& dest, node* src) {
   if (src == nullptr) return;
 
-  dest->es_final = src->es_final;
-
   for (int i = 0; i < 26; ++i) {
     if (src->fills[i] != nullptr) {
       dest->fills[i] = new node;
@@ -123,7 +121,7 @@ void diccionari::llista_paraules(nat k, list<string>& L) const throw(error) {
 }
 
 void diccionari::dfs_llista_paraules(node* n, string& current_word, nat k, list<string>& L) const {
-  if (n->es_final && current_word.length() >= k) {
+  if (current_word.length() >= k) {
     // Si el nodo marca el final de una palabra y su longitud es >= k, la añadimos.
     L.push_back(current_word);
   }
