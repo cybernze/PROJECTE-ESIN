@@ -1,5 +1,4 @@
 #include "anagrames.hpp"
-#include "anagrames.rep"
 #include "word_toolkit.hpp" // Funciones de ayuda para anagramas
 
 const float anagrames::LOAD_FACTOR = 0.75;
