@@ -69,7 +69,7 @@ void anagrames::insereix(const string& paraula) throw(error) {
   while (actual) {
     if (actual->_clau == clau) {
       // Insertar palabra en orden
-      auto it = actual->_valors.begin();
+      list<string>::iterator it = actual->_valors.begin();
       while (it != actual->_valors.end() && *it < paraula) {
         ++it;
       }
