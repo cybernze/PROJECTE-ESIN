@@ -86,7 +86,6 @@ void diccionari::satisfan_patro(const vector<string>& q, list<string>& L)const t
     L.clear(); //Nos aseguramos que la lista esté vacia
     string current_word;
     satisfan_patro_recursive(_arrel, q, 0, current_word, L);  // Llamada al método auxiliar
-    L.sort();  // Ordenar alfabéticamente
 }
 
 void diccionari::satisfan_patro_recursive(node* p, const vector<string>& q, unsigned long pos, string& current_word, list<string>& L)const{
@@ -95,7 +94,12 @@ void diccionari::satisfan_patro_recursive(node* p, const vector<string>& q, unsi
     // CB: Hem processat tot el patró
     if (pos == q.size()) {
         if (p->fills[26] != nullptr) {
-            L.push_back(current_word);  // Agregar la palabra si es válida
+            // Buscar la posición correcta para insertar la palabra ordenadamente
+            list<string>::iterator it = L.begin();
+            while (it != L.end() && *it < current_word) {
+                ++it;
+            }
+            L.insert(it, current_word);  // Insertar la palabra en la posición correcta
         }
         return;
     }
@@ -141,4 +145,3 @@ void diccionari::dfs_llista_paraules(node* n, string& current_word, nat k, list<
 nat diccionari::num_pal() const throw(){
   return num_paraules;
 }
-
