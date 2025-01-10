@@ -1,4 +1,26 @@
-//Representació arbre Trie
+/*
+ * Representació d’un Trie (Arbre Prefixat)
+ *
+ * Aquesta estructura de dades s’utilitza per emmagatzemar paraules de manera eficient,
+ * especialment útil en operacions com la cerca, inserció i suggeriments d’autocompletat.
+ *
+ * Implementació:
+ * - Cada node té un array `fills` de 27 punters:
+ *   * 26 posicions per a les lletres de l’alfabet (a-z).
+ *   * 1 posició addicional per a marcar el final d’una paraula (més eficient que utilitzar mapes o conjunts).
+ * - Hem optat per un array fix perquè l’alfabet és petit, i el cost addicional en memòria
+ *   és insignificant davant del guany en simplicitat i eficiència (O(1) per accedir a cada fill).
+ *
+ * Avantatges:
+ * - Operacions d’inserció i cerca en temps O(L), on L és la longitud de la paraula.
+ * - Estructura simple i directa, adequada per a alfabets petits.
+ *
+ * Desavantatges:
+ * - Major ús de memòria comparat amb altres estructures més dinàmiques, com ara els arbres ternaris.
+ * - Menys adaptable a alfabets grans o dinàmics.
+ *
+ * Aquesta implementació és ideal garantir que la velocitat sigui prioritària sobre l’ús de memòria.
+ */
 struct node{
     node *fills[27]; /*Fills del node, 26 per lletres i 1 per final de paraula (+ eficient que unordered_set/map, tiene O(1) en insercion, busqueda)
                         com el nostre alfabet es petit no ens importa molt l'espai que reserva (unic punt dèbil)
@@ -9,6 +31,8 @@ struct node{
 };
 node *_arrel; //Arrel de l'arbre
 nat num_paraules; //Numero de paraules al diccionari
-void copia(node*& dest, node* src);  // Realiza una copia profunda
-void neteja(node* p); //Realiza una limpieza del arbol apuntado por p
-void satisfan_patro_recursive(node* p, const vector<string>& q, unsigned long pos, string& current_word, list<string>& L)const; //Funcio helper de satisfan_patro
+
+void copia(node*& dest, node* src);
+void neteja(node* p);
+void satisfan_patro_recursive(node* p, const vector<string>& q, unsigned long pos, string& current_word, list<string>& L)const;
+void dfs_llista_paraules(node* n, string& current_word, nat k, list<string>& L) const;

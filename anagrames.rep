@@ -1,5 +1,31 @@
-// Hash table que mapea anagramas canónicos a listas de palabras
-//Cada clave es el anagrama canonico y el valor es una lista de palabras que cumplen el anagrama canonico
+/*
+ * Representació d’una taula hash que mapeja anagrames canònics a llistes de paraules.
+ *
+ * Implementació:
+ * - Cada entrada de la taula conté nodes de tipus `node_hash`, que emmagatzemen:
+ *   * `_clau`: l’anagrama canònic.
+ *   * `_valors`: una llista de paraules que compleixen l’anagrama canònic.
+ *   * `_seg`: un punter al següent node en cas de col·lisió (resolució amb cadenes enllaçades).
+ * - `_taula`: un array de punters a `node_hash`, que representa la taula hash.
+ *
+ * - `_M`: mida actual de la taula hash.
+ * - `_quants`: nombre d’elements emmagatzemats.
+ * - `LOAD_FACTOR`: límit màxim del factor de càrrega. Quan `_quants / _M` supera aquest límit,
+ *   s'executa la funció `rehash` per redimensionar la taula i distribuir millor les claus.
+ *
+ * Avantatges:
+ * - Cerca, inserció i eliminació eficients amb complexitat mitjana O(1).
+ * - La llista enllaçada resol col·lisions de manera simple i flexible.
+ * - Ideal per gestionar grans volums de dades on les claus (anagrames canònics) són molt diverses.
+ *
+ * Desavantatges:
+ * - Ús de memòria més alt degut a les cadenes enllaçades.
+ * - La complexitat pot arribar a O(n) en el pitjor cas si hi ha moltes col·lisions.
+ *
+ * Aquesta implementació és adequada quan la diversitat d’anagrames és alta i es prioritza la velocitat
+ * per sobre de l’ús òptim de memòria.
+ */
+
 struct node_hash{
     string _clau;
     list<string> _valors;

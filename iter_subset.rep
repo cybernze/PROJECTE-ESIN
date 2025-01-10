@@ -1,9 +1,39 @@
-nat n;                   // Nombre total d'elements
-nat k;                   // Tamany dels subconjunts
-vector<nat> sub_actual; // Subconjunt actual
-bool termina;                  // Estat de l'iterador. True si ha terminat i no hi han més subocnjunts per generar. False en cas contrari.
-                                // Permet tenir eficientment l'estat del nostre subconjunt en tot moment. Així podem tractar errors d'accés fora de rang molt fàcil.
+/*
+ * Iterador per a Subconjunts
+ *
+ * Aquesta classe implementa un iterador per generar totes les combinacions possibles d'un conjunt de mida `n` amb submides de `k`.
+ *
+ * Implementació:
+ * - `n`: Nombre total d'elements.
+ * - `k`: Tamany dels subconjunts que es generaran.
+ * - `sub_actual`: Vector que conté el subconjunt actual.
+ * - `termina`: Indica si s'han generat tots els subconjunts possibles.
+ *
+ * Característiques:
+ * - Es calcula el següent subconjunt en l'operador d'increment (`++`) per evitar generar totes les combinacions
+ *   si no són necessàries. Això és especialment útil per aplicacions on només es requereix un subconjunt específic
+ *   o s'itera parcialment.
+ * - La generació de subconjunts segueix un ordre lexicogràfic, i l'estat es manté eficientment en tot moment gràcies
+ *   al vector `sub_actual` i la variable booleana `termina`.
+ *
+ * Avantatges:
+ * - Eficient en temps i memòria, ja que no genera totes les combinacions alhora.
+ * - Pot gestionar subconjunts de mida arbitrària amb `k <= n`.
+ * - Simplicitat en la implementació i ús.
+ *
+ * Aquesta implementació és ideal per iteracions parcials o generació sota demanda, prioritzant eficiència en lloc
+ * de precomputació.
+ */
 
-//Genera el siguiente subconjunto en orden lexicográfico.
-//Retorna true si ha pogut generar un nou subconjunt, false en cas contrari.
+nat n;                   // Nombre total d'elements.
+nat k;                   // Tamany dels subconjunts.
+vector<nat> sub_actual;  // Subconjunt actual.
+bool termina;            // Estat de l'iterador: True si s'han generat tots els subconjunts, False altrament.
+
+/*
+    * Genera el següent subconjunt en ordre lexicogràfic.
+    * Retorna `true` si ha pogut generar un nou subconjunt, `false` en cas contrari.
+    * Aquesta funció evita calcular totes les combinacions alhora i permet un ús eficient
+    * de la memòria i el temps.
+    */
 bool combina();

@@ -1,12 +1,14 @@
 #include "anagrames.hpp"
-#include "word_toolkit.hpp" // Funciones de ayuda para anagramas
+#include "word_toolkit.hpp"
 
 const float anagrames::LOAD_FACTOR = 0.75;
 
+// Cost: O(M), on M és la mida inicial de la taula hash.
 anagrames::anagrames() throw(error) : _M(16), _quants(0){
   _taula= new node_hash*[_M]();
 }
 
+// Cost: O(M + n), on M és la mida de la taula i n el nombre total d'elements.
 anagrames::anagrames(const anagrames& A) throw(error)
 : _M(A._M), _quants(A._quants) {
   _taula= new node_hash *[_M]();
@@ -24,6 +26,7 @@ anagrames::anagrames(const anagrames& A) throw(error)
   }
 }
 
+// Cost: O(M + n), on M és la mida de la taula i n el nombre total d'elements.
 anagrames& anagrames::operator=(const anagrames& A) throw(error) {
   if (this != &A) {
     this->~anagrames();
@@ -46,6 +49,8 @@ anagrames& anagrames::operator=(const anagrames& A) throw(error) {
   return *this;
 }
 
+
+// Cost: O(M + n), on M és la mida de la taula i n el nombre total d'elements.
 anagrames::~anagrames() throw() {
   for (nat i = 0; i < _M; ++i) {
     node_hash* actual = _taula[i];
@@ -58,6 +63,8 @@ anagrames::~anagrames() throw() {
   delete[] _taula;
 }
 
+
+// Cost: O(L + k), on L és la longitud de la paraula i k el nombre de col·lisions a la posició.
 void anagrames::insereix(const string& paraula) throw(error) {
   diccionari::insereix(paraula);
   string clau = word_toolkit::anagrama_canonic(paraula);
@@ -65,43 +72,35 @@ void anagrames::insereix(const string& paraula) throw(error) {
 
   node_hash* actual = _taula[pos];
 
-  // Buscar clave en la lista enlazada de la posición actual
   while (actual) {
     if (actual->_clau == clau) {
-      // Insertar palabra en orden
       list<string>::iterator it = actual->_valors.begin();
       while (it != actual->_valors.end() && *it < paraula) {
         ++it;
       }
 
-      // Insertar solo si no existe
       if (it == actual->_valors.end() || *it != paraula) {
         actual->_valors.insert(it, paraula);
       }
-      return; // Clave encontrada y actualizada, terminamos
+      return;
     }
     actual = actual->_seg;
   }
 
-  // Crear un nuevo nodo en la lista enlazada
+
   node_hash* nuevoNodo = new node_hash;
   nuevoNodo->_clau = clau;
   nuevoNodo->_valors = {paraula};
-  nuevoNodo->_seg = _taula[pos]; // Enlazar con el resto de la lista
-  _taula[pos] = nuevoNodo;       // Actualizar la cabecera de la lista
+  nuevoNodo->_seg = _taula[pos];
+  _taula[pos] = nuevoNodo;
   ++_quants;
 
-  // Verificar el factor de carga y redimensionar si es necesario
-  if (static_cast<float>(_quants) / _M > LOAD_FACTOR) {
-    rehash();
-  }
+  if (static_cast<float>(_quants) / _M > LOAD_FACTOR) rehash();
 }
 
-
+// Cost: O(L + k), on L és la longitud de l'anagrama i k el nombre de col·lisions.
 void anagrames::mateix_anagrama_canonic(const string& a, list<string>& L) const throw(error) {
-  if (!word_toolkit::es_canonic(a)) {
-    throw error(NoEsCanonic);
-  }
+  if (!word_toolkit::es_canonic(a)) throw error(NoEsCanonic);
 
   int pos = fhash(a)%_M;
   node_hash* actual = _taula[pos];
@@ -116,40 +115,39 @@ void anagrames::mateix_anagrama_canonic(const string& a, list<string>& L) const 
   L.clear();
 }
 
+// Cost: O(L), on L és la longitud de la clau.
 nat anagrames::fhash(const string& clau)const{
 	nat n = 0;
 	for (nat i=0; i < clau.length(); ++i) {
-		n = n + clau[i]*(i+1); // n acumula el codi ascii
+		n = n + clau[i]*(i+1);
 	}
 	return n;
 }
 
+// Redimensionar la taula hash
+// Pre: cert
+// Post: La taula hash es redimensiona per a acomodar més elements.
+// Cost: O(M + n), on M és la mida actual de la taula i n el nombre d'elements.
 void anagrames::rehash() {
-    nat nuevoTamano = _M * 2; // Duplicar el tamaño de la tabla
-    node_hash** nuevaTabla = new node_hash*[nuevoTamano](); // Crear una nueva tabla inicializada a nullptr
+    nat nouTamany = _M * 2;
+    node_hash** novaTaula = new node_hash*[nouTamany]();
 
-    // Reinsertar todos los nodos de la tabla antigua en la nueva tabla
     for (nat i = 0; i < _M; ++i) {
-        node_hash* actual = _taula[i]; // Apuntador al primer nodo en la posición actual
+        node_hash* actual = _taula[i];
 
         while (actual) {
-            node_hash* siguiente = actual->_seg; // Guardar el siguiente nodo antes de modificar `_seg`
+            node_hash* seg = actual->_seg;
 
-            // Recalcular la nueva posición en la tabla ampliada
-            nat nuevaPos = fhash(actual->_clau) % nuevoTamano;
+            nat novaPos = fhash(actual->_clau) % nouTamany;
 
-            // Insertar el nodo al inicio de la lista enlazada en la nueva posición
-            actual->_seg = nuevaTabla[nuevaPos];
-            nuevaTabla[nuevaPos] = actual;
+            actual->_seg = novaTaula[novaPos];
+            novaTaula[novaPos] = actual;
 
-            actual = siguiente; // Avanzar al siguiente nodo en la lista enlazada actual
+            actual = seg;
         }
     }
-
-    // Liberar la memoria de la tabla antigua
     delete[] _taula;
 
-    // Actualizar la tabla y su tamaño
-    _taula = nuevaTabla;
-    _M = nuevoTamano;
+    _taula = novaTaula;
+    _M = nouTamany;
 }
