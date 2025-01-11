@@ -3,170 +3,182 @@
 using namespace std;
 
 template <typename T>
-class AVLTree {
+class AVLArbre {
 private:
     struct Node {
-        T key;
-        Node* left;
-        Node* right;
-        int height;
+        T clau;
+        Node* esquerra;
+        Node* dreta;
+        int altura;
 
-        Node(const T& k) : key(k), left(nullptr), right(nullptr), height(1) {}
+        Node(const T& c) : clau(c), esquerra(nullptr), dreta(nullptr), altura(1) {}
     };
 
-    Node* root;
+    Node* arrel;
 
-    // Devuelve la altura de un nodo
-    int getHeight(Node* node) {
-        return node ? node->height : 0;
+    // Retorna l'altura d'un node
+    // Cost temporal: O(1)
+    int obtenirAltura(Node* node) {
+        return node ? node->altura : 0;
     }
 
-    // Calcula el factor de equilibrio
-    int getBalanceFactor(Node* node) {
-        return node ? getHeight(node->left) - getHeight(node->right) : 0;
+    // Calcula el factor d'equilibri
+    // Cost temporal: O(1)
+    int obtenirFactorEquilibri(Node* node) {
+        return node ? obtenirAltura(node->esquerra) - obtenirAltura(node->dreta) : 0;
     }
 
-    // Realiza una rotación hacia la derecha
-    Node* rotateRight(Node* y) {
-        Node* x = y->left;
-        Node* T2 = x->right;
+    // Realitza una rotació cap a la dreta
+    // Cost temporal: O(1)
+    Node* rotacioDreta(Node* y) {
+        Node* x = y->esquerra;
+        Node* T2 = x->dreta;
 
-        x->right = y;
-        y->left = T2;
+        x->dreta = y;
+        y->esquerra = T2;
 
-        y->height = max(getHeight(y->left), getHeight(y->right)) + 1;
-        x->height = max(getHeight(x->left), getHeight(x->right)) + 1;
+        y->altura = max(obtenirAltura(y->esquerra), obtenirAltura(y->dreta)) + 1;
+        x->altura = max(obtenirAltura(x->esquerra), obtenirAltura(x->dreta)) + 1;
 
         return x;
     }
 
-    // Realiza una rotación hacia la izquierda
-    Node* rotateLeft(Node* x) {
-        Node* y = x->right;
-        Node* T2 = y->left;
+    // Realitza una rotació cap a l'esquerra
+    // Cost temporal: O(1)
+    Node* rotacioEsquerra(Node* x) {
+        Node* y = x->dreta;
+        Node* T2 = y->esquerra;
 
-        y->left = x;
-        x->right = T2;
+        y->esquerra = x;
+        x->dreta = T2;
 
-        x->height = max(getHeight(x->left), getHeight(x->right)) + 1;
-        y->height = max(getHeight(y->left), getHeight(y->right)) + 1;
+        x->altura = max(obtenirAltura(x->esquerra), obtenirAltura(x->dreta)) + 1;
+        y->altura = max(obtenirAltura(y->esquerra), obtenirAltura(y->dreta)) + 1;
 
         return y;
     }
 
-    // Inserta un valor de forma recursiva
-    Node* insert(Node* node, const T& key) {
+    // Insereix un valor de manera recursiva
+    // Cost temporal: O(log n), perquè el màxim de comparacions i rotacions és proporcional a l'altura de l'arbre.
+    Node* inserir(Node* node, const T& clau) {
         if (!node) {
-            return new Node(key);
+            return new Node(clau);
         }
 
-        if (key < node->key) {
-            node->left = insert(node->left, key);
-        } else if (key > node->key) {
-            node->right = insert(node->right, key);
+        if (clau < node->clau) {
+            node->esquerra = inserir(node->esquerra, clau);
+        } else if (clau > node->clau) {
+            node->dreta = inserir(node->dreta, clau);
         } else {
-            // Clave duplicada, no se permite
+            // Clau duplicada, no es permet
             return node;
         }
 
-        node->height = 1 + max(getHeight(node->left), getHeight(node->right));
+        node->altura = 1 + max(obtenirAltura(node->esquerra), obtenirAltura(node->dreta));
 
-        int balance = getBalanceFactor(node);
+        int equilibri = obtenirFactorEquilibri(node);
 
-        // Caso de rotación derecha
-        if (balance > 1 && key < node->left->key) {
-            return rotateRight(node);
+        // Casos de rotació
+        if (equilibri > 1 && clau < node->esquerra->clau) {
+            return rotacioDreta(node);
         }
-
-        // Caso de rotación izquierda
-        if (balance < -1 && key > node->right->key) {
-            return rotateLeft(node);
+        if (equilibri < -1 && clau > node->dreta->clau) {
+            return rotacioEsquerra(node);
         }
-
-        // Caso de rotación izquierda-derecha
-        if (balance > 1 && key > node->left->key) {
-            node->left = rotateLeft(node->left);
-            return rotateRight(node);
+        if (equilibri > 1 && clau > node->esquerra->clau) {
+            node->esquerra = rotacioEsquerra(node->esquerra);
+            return rotacioDreta(node);
         }
-
-        // Caso de rotación derecha-izquierda
-        if (balance < -1 && key < node->right->key) {
-            node->right = rotateRight(node->right);
-            return rotateLeft(node);
+        if (equilibri < -1 && clau < node->dreta->clau) {
+            node->dreta = rotacioDreta(node->dreta);
+            return rotacioEsquerra(node);
         }
 
         return node;
     }
 
-    // Busca un valor en el árbol
-    bool search(Node* node, const T& key) {
+    // Cerca un valor a l'arbre
+    // Cost temporal: O(log n), perquè només cal recórrer l'altura de l'arbre.
+    bool cerca(Node* node, const T& clau) {
         if (!node) {
             return false;
         }
 
-        if (key == node->key) {
+        if (clau == node->clau) {
             return true;
-        } else if (key < node->key) {
-            return search(node->left, key);
+        } else if (clau < node->clau) {
+            return cerca(node->esquerra, clau);
         } else {
-            return search(node->right, key);
+            return cerca(node->dreta, clau);
         }
     }
 
-    // Recorre el árbol en orden y almacena los valores en una lista
-    void inorderTraversal(Node* node, list<T>& values) {
+    // Recorre l'arbre en ordre i emmagatzema els valors en una llista
+    // Cost temporal: O(n), perquè es visiten tots els nodes exactament una vegada.
+    void recorregutInordre(Node* node, list<T>& valors) {
         if (node) {
-            inorderTraversal(node->left, values);
-            values.push_back(node->key);
-            inorderTraversal(node->right, values);
+            recorregutInordre(node->esquerra, valors);
+            valors.push_back(node->clau);
+            recorregutInordre(node->dreta, valors);
         }
     }
 
-    // Libera la memoria de los nodos
-    void deleteTree(Node* node) {
+    // Allibera la memòria dels nodes
+    // Cost temporal: O(n), perquè cal visitar tots els nodes per eliminar-los.
+    void eliminarArbre(Node* node) {
         if (node) {
-            deleteTree(node->left);
-            deleteTree(node->right);
+            eliminarArbre(node->esquerra);
+            eliminarArbre(node->dreta);
             delete node;
         }
     }
 
 public:
-    AVLTree() : root(nullptr) {}
+    AVLArbre() : arrel(nullptr) {}
 
-    ~AVLTree() {
-        deleteTree(root);
+    ~AVLArbre() {
+        eliminarArbre(arrel);
     }
 
-    // Inserta una clave en el árbol
-    void insert(const T& key) {
-        root = insert(root, key);
+    // **Precondició**: cap.
+    // **Postcondició**: Insereix una clau a l'arbre AVL.
+    // Cost temporal: O(log n)
+    void inserir(const T& clau) {
+        arrel = inserir(arrel, clau);
     }
 
-    // Busca una clave en el árbol
-    bool search(const T& key) {
-        return search(root, key);
+    // **Precondició**: cap.
+    // **Postcondició**: Retorna cert si la clau existeix a l'arbre; altrament, fals.
+    // Cost temporal: O(log n)
+    bool cerca(const T& clau) {
+        return cerca(arrel, clau);
     }
 
-    // Inserta una lista de valores
-    void insertList(const list<T>& values) {
-        for (const auto& value : values) {
-            insert(value);
+    // **Precondició**: cap.
+    // **Postcondició**: Insereix una llista de valors a l'arbre AVL.
+    // Cost temporal: O(m log n), on \(m\) és la mida de la llista i \(n\) el nombre de nodes actuals de l'arbre.
+    void inserirLlista(const list<T>& valors) {
+        for (const auto& valor : valors) {
+            inserir(valor);
         }
     }
 
-    // Devuelve una lista de los elementos en orden ascendente
-    list<T> getInOrder() {
-        list<T> values;
-        inorderTraversal(root, values);
-        return values;
+    // **Precondició**: cap.
+    // **Postcondició**: Retorna una llista dels elements en ordre ascendent.
+    // Cost temporal: O(n)
+    list<T> obtenirEnOrdre() {
+        list<T> valors;
+        recorregutEnOrdre(arrel, valors);
+        return valors;
     }
 
-    // Imprime los elementos en orden ascendente
-    void print() {
-        list<T> values = getInOrder();
-        for (const auto& value : values) {
-            cout << value << " ";
+    // **Precondició**: cap.
+    // **Postcondició**: Imprimeix els elements en ordre ascendent.
+    // Cost temporal: O(n)
+    void imprimeix() {
+        list<T> valors = obtenirEnOrdre();
+        for (const auto& valor : valors) {
+            cout << valor << " ";
         }
         cout << endl;
     }

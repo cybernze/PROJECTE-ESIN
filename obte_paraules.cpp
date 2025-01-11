@@ -73,13 +73,13 @@ void obte_paraules(nat k, const string& s, const anagrames& A, list<string>& par
         A.mateix_anagrama_canonic(word_toolkit::anagrama_canonic(combinacion), palabras_validas);
 
         // Inserir les paraules al conjunt per evitar duplicats
-        paraules_unicas.insertList(palabras_validas);
+        paraules_unicas.inserirLlista(palabras_validas);
 
         ++comb;
     }
 
     // Passar les paraules úniques al resultat final en ordre lexicogràfic
-    paraules = paraules_unicas.getInOrder();
+    paraules = paraules_unicas.obtenirEnOrdre();
 }
 
 // Cost temporal:
