@@ -168,7 +168,7 @@ public:
     // Cost temporal: O(n)
     list<T> obtenirEnOrdre() {
         list<T> valors;
-        recorregutEnOrdre(arrel, valors);
+        recorregutInordre(arrel, valors);
         return valors;
     }
 

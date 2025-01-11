@@ -1,4 +1,3 @@
-
 #include <list>
 #include <string>
 #include "AVL.cpp"
@@ -52,7 +51,7 @@ void obte_paraules(nat k, const string& s, const anagrames& A, list<string>& par
     }
 
     paraules.clear();
-    AVLTree<string> paraules_unicas;
+    AVLArbre<string> paraules_unicas;
 
     iter_subset comb(s.size(), k);
     while (!comb.end()) {
