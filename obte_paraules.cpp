@@ -35,9 +35,6 @@ Aquesta funció reutilitza la funcionalitat de la primera funció obte_paraules(
 Generar paraules per cada longitud k separadament permet treballar de manera ordenada i clara, a més d’assegurar que es compleix el requisit d’ordenació per longitud ascendent.
 Les insercions es fan directament al final de la llista, mantenint l’eficiència.
 
--   Flexibilitat en l’ordenació final
-Si és necessari, l’ordenació per longitud ascendent i ordre alfabètic es pot realitzar de manera senzilla i eficient amb std::list::sort.
-
 -Alternatives pensades abans d'arribar a la solució final:
 1. Crear una nova llista en lloc de netejar-la/assegurar-nos de que sigui buida amb 'paraules.clear()',seria menys eficients si la llista ja conté espai reservat per a elements
 2. Utilització de set: No utilitzem set perquè no ens interessa l'ordre general, sinó l'ordre en els diferents subconjunts.
