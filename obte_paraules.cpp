@@ -42,8 +42,10 @@ Les insercions es fan directament al final de la llista, mantenint l’eficiènc
 
 namespace obte_paraules {
 
-// Cost temporal: O((kn)⋅(k+klogk)+tlogt)
-// Cost espacial: O(k+p+t), on k
+// Cost: O(n^k * (k log k + p log m)), on:
+// - n^k: Nombre de subconjunts de mida k d’un conjunt de mida n.
+// - k log k: Càlcul de l’anagrama canònic.
+// - p log m: Inserció de p paraules vàlides a l’arbre balancejat (m paraules úniques).
 void obte_paraules(nat k, const string& s, const anagrames& A, list<string>& paraules) throw(error) {
     if (k < 3 || k > s.size()) {
         throw error(LongitudInvalida);
@@ -51,10 +53,7 @@ void obte_paraules(nat k, const string& s, const anagrames& A, list<string>& par
 
     paraules.clear();
     AVLTree<string> paraules_unicas;
-    /* Utilitzem AVL ja que té un cost d'inserció de O(log n)
-       vs O(1)+ordenació O(n log n) */
 
-    // Iterar sobre els subconjunts de k elements
     iter_subset comb(s.size(), k);
     while (!comb.end()) {
         const subset& indices = *comb;
@@ -65,7 +64,6 @@ void obte_paraules(nat k, const string& s, const anagrames& A, list<string>& par
             combinacion.push_back(s[index - 1]);
         }
 
-        // Obtenir les paraules vàlides
         list<string> palabras_validas;
         A.mateix_anagrama_canonic(word_toolkit::anagrama_canonic(combinacion), palabras_validas);
 
@@ -79,8 +77,11 @@ void obte_paraules(nat k, const string& s, const anagrames& A, list<string>& par
     paraules = paraules_unicas.obtenirEnOrdre();
 }
 
-// Cost temporal:
-// Cost espacial:
+// Cost: O(∑(k=3 to n) n^k * (k log k + p log m)), on:
+// - n^k: Nombre de subconjunts de mida k d’un conjunt de mida n.
+// - k log k: Càlcul de l’anagrama canònic per cada subconjunt.
+// - p log m: Inserció de p paraules vàlides a l’arbre balancejat (m paraules úniques).
+// La complexitat és la suma dels costos per a tots els valors de k (de 3 a n).
 void obte_paraules(const string& s, const anagrames& A, list<string>& paraules) throw(error) {
     if (s.size() < 3) {
         throw error(LongitudInvalida);
