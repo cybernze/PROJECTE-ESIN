@@ -71,17 +71,17 @@ namespace word_toolkit {
     char mes_frequent(const string& excl, const list<string>& L) throw() {
 
         // Pas 1: Creem vector per comptar freqüències de totes les lletres de 'A - 'Z
-        vector<int> freq(25, 0);
+        int freq[25]= {0};
 
-        // Pas 2: Utilitzem un vector bool per saber l'aparició de les lletres ('A - 'Z) que conté l'string execl
-        vector<bool> apareix(25, false);
+        // Pas 2: Utilitzem un vector bool per saber l'aparició de les lletres ('A - 'Z) que conté l'string excl
+        bool apareix[25]= {false};
         for (char c : excl) { //
             if (c >= 'A' and c <= 'Z') {
                 apareix[c - 'A'] = true;
             }
         }
 
-        // Pas 3: Comptem únicament la freqüència dels caràcters de cada string de la llista L però que no apareixen a l'string execl
+        // Pas 3: Comptem únicament la freqüència dels caràcters de cada string de la llista L però que no apareixen a l'string excl
         for (const string& paraula : L) {
             for (char c : paraula) {
                 if (c >= 'A' and c <= 'Z' and !apareix[c - 'A']) {
@@ -91,7 +91,7 @@ namespace word_toolkit {
         }
 
         // Pas 4: Determinar el caràcter més freqúent (alfabéticament menor en cas d'empat)
-        char res = '\0'; //En cas extrem (execl conté totes les lletres A-Z) retornem 0 en codi ASCII
+        char res = '\0'; //En cas extrem (excl conté totes les lletres A-Z) retornem 0 en codi ASCII
         int max = 0;
         for (int i = 0; i < 25; ++i) {
             if (freq[i] > max) {
